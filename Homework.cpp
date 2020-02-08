@@ -9,18 +9,24 @@ int toInt(string s){
 	return n;
 }
 
-vector<string>v; 
-void solve(string str, int n, int index, string curr){ 
-	if (index == n) 
-		return; 
-	v.push_back(curr); //cout<<curr<<"\n";
-	for (int i=index+1; i<n; i++) { 
-		curr += str[i]; 
-		solve(str, n, i, curr); 
-		curr = curr.erase(curr.size()-1); 
-	} 
-	return; 
-} 
+vector<string>v;
+void solve(string str, int n){
+	v.clear();
+	for(int i=0; i<(1<<n); i++){
+		string s;
+		for(int j=0; j<n; j++){
+			if(i&(1<<j)){
+				s+=str[j];
+			}
+		}
+		v.push_back(s);
+	}
+	/*int l = v.size();
+	cout<<l<<"\n";
+	for(int i=1; i<l; i++){
+        cout<<v[i]<<"\n";
+	}*/
+}
 
 bool isPerfect(int n){
 	int a = sqrt(n);
@@ -30,27 +36,25 @@ bool isPerfect(int n){
 
 int32_t main(){
 	ios_base::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+	//freopen("input.txt","r",stdin);
 	int tc; cin>>tc;
 	for(int T=1; T<=tc; T++){
-		v.clear();
-		string s, s2 = ""; cin>>s;
+		string s; cin>>s;
 		int len = s.length();
-		
-		solve(s, s.size(), -1, s2);
-		
-		int vl = v.size(), res = -1, ok = 0;
-		for(int i=0; i<vl; i++){
-			int aa = toInt(v[i]);
-			if(isPerfect(aa) and aa != 0){
-				string s = v[i];
-				int idx = 0;
-				while(s[idx]=='0') idx++;
-				ok = 1; int aa = s.length()-idx;
-				res = max(res,aa);
-			}
-		}
-		if(!ok) cout<<"-1\n";
-		else cout<<len-res<<"\n";
+		solve(s, len);
+        int vl = v.size(), ok = 0, res = -1;
+        for(int i=1; i<vl; i++){
+            int val = toInt(v[i]);
+            if(isPerfect(val)){
+                string s = v[i];
+                int aa = s.length();
+                int idx = 0; ok = 1;
+                while(s[idx]=='0') idx++;
+                res = max(res, aa-idx);
+            }
+        }
+        if(!ok) cout<<"-1\n";
+        else cout<<len-res<<"\n";
 	}
 	return 0;
 }
